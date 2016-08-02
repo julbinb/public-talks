@@ -17,6 +17,9 @@
 	by [Shriram Krishnamurthi](https://cs.brown.edu/~sk/) (ECOOP '2016 [GRACE](http://2016.ecoop.org/track/GRACE-2016) Workshop)  
 	Papers: [1](http://web.cs.wpi.edu/~kfisler/Pubs/icer14-rainfall/icer14.pdf),
 	[2](http://cs.brown.edu/~sk/Publications/Papers/Published/fks-mod-plan-comp-studies/)
+	
+*	[Exercises in Programming Style](http://conf.researchr.org/event/curryon-2016/curryon-2016-exercises-in-programming-style)
+	by [Crista Lopes](https://www.ics.uci.edu/~lopes/)
 
 ### Personalities 
 
@@ -29,16 +32,33 @@
 	
 *	[Matthias Felleisen](http://www.ccs.neu.edu/home/matthias/),
 	Trustee Professor at Northeastern University’s College of Computer Science
-	**\#[Racket](racket-lang.org)**
+	**\#Racket**
 	
-*	[Jeremy Siek](http://wphomes.soic.indiana.edu/jsiek/)
+*	[Jeremy Siek](http://wphomes.soic.indiana.edu/jsiek/),
+	Associate Professor of Computer Science in the School of Informatics and Computing at Indiana University
 	**\#GradualTyping**
 	
-*	
+*	[Shriram Krishnamurthi](https://cs.brown.edu/~sk/),
+	Vice President for Programming Languages at Brown University
+	**\#Pyret**
+	
+*	[Kim Bruce](http://www.cs.pomona.edu/~kim/),
+	Professor of Computer Science at Pomona College
+	**\#Grace**
+	
+*	[Andrew Black](http://web.cecs.pdx.edu/~black/),
+	Professor, Department of Computer Science, Portland State University
+	**\#Grace**
+	
+*	[Crista Lopes](https://www.ics.uci.edu/~lopes/),
+	Professor of Informatics in the School of Information and Computer Sciences at the University of California, Irvine
 
 ### Programming Languages
 
-*	
+*	[Pyret](https://www.pyret.org)
+
+*	[Grace](http://gracelang.org/applications/home/)
+	in [one page](http://gracelang.org/applications/documentation/grace-in-one-page/)
 
 *	[Racket](http://racket-lang.org/)
  
