@@ -30,28 +30,28 @@ Julia Belyakova
 
 ---
 
-## Language F1
+### Language F1. Simple types, records, and references
+<!-- first-order language -->
 
-<p style="text-align:center;font-size:1.25em"><b>Simple types, records, and references</b></p>
-
-Types:
+Types
 
 ```less
-ty, A, B = Unit | Bool | ..   // basic types
-   | A → B                    // function
-   | {l1:A1, .., ln:An}       // record
-   | Ref[ty]                  // reference
+A, B = Unit | Bool | ..      // basic types
+   | A → B                   // function type
+   | {l1:A1, .., ln:An}      // record type
+   | Ref[A]                  // reference type
 ```
 
-Terms:
+Terms
 
 ```less
-tm, M, N = x | ...            // variable    | literals
-   | λx:A.M | M N             // abstraction | application
-   | let x=M in N | M ; N     // let-binding | composition
-   | {l1=M1, .., ln=Mn}       // record
-   | ref(tm)                  // reference 
-   | !tm | M := N             // dereference | assignment
+M, N = x | 0, ..             // variable    | literals
+   | λx:A.M                  // abstraction (function)
+   | M N                     // application (call)
+   | let x=M in N | M ; N    // let-binding | composition
+   | {l1=M1, .., ln=Mn}      // record
+   | ref(M)                  // reference 
+   | !M | M := N             // dereference | assignment
 ```
 
 ---
@@ -80,6 +80,62 @@ Typing:
 --------------------------------------------------------------
    ⊢ (let count=ref(0) in ..) : {inc:Int→Unit, tot:Unit→Int}
 ```
+
+---
+
+### Language F2. Universal types
+
+Types
+
+```less
+A, B = ..                // types of F1
+   | X                   // type variable
+   | ∀X.A                // universally quantified type
+```
+
+Terms
+
+```less
+M, N = ..                // terms of F1
+   | λX.M                // type abstraction
+   | tm [A]              // type application (instantiation)
+```
+
+Typing
+
+```less
+(T-TyAbs)            (T-TyApp)
+    Γ, X ⊢ M : A         Γ ⊢ M : ∀X.A     Γ ⊢ B
+  ----------------     --------------------------
+   Γ ⊢ λX.M: ∀X.A          Γ ⊢ M [B] : [B/X]A
+```
+
+---
+
+### Parametric Polymorhism (Generics)
+
+Generic identity function:
+
+```less
+let id = λX.λx:X.x      // id : ∀X→X
+in  (id [Int] 4)        // yields 4
+```
+
+Type of generic stack:
+
+```less
+∀Item.{push : Item×List[Item] → List[Item],
+       pop  : List[Item] → List[Item], 
+       empty: List[Item],     top: List[Item] → Item}
+```
+
+Implementation of generic stack:
+
+```less
+λItem.{push = λx:Item.λs:List[Item]. cons[Item] x s,
+       pop  = λs:List[Item]. tail [Item] s, ..}
+```
+
 ---
 
 @title[Part 2. Object-Oriented Languages]
