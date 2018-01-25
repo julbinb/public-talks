@@ -1,33 +1,19 @@
-@title[Intro]
+@title[Title]
 
-# Header1
+## Type-theoretic foundations of object-oriented languages
+### Everything old is new again
 
-## Subtyping
+**PRL Reading Group**
 
-hello
+Tue, Jan/30/2018
 
-### Code
-
-```java
-int inc(int x) {
-    return x + 1
-}
-```
+Julia Belyakova
 
 ---
 
 @title[Slide2]
 
-## Parametric Polymorphism
-
-1. aaa
-1. eee
-
-#### Boo
-
-boo
-
-baz *Bar*
+blaaa
 
 ```
 λx:A.M: A→B
