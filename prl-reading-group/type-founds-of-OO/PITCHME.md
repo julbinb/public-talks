@@ -1,8 +1,12 @@
 @title[Intro]
 
+# Header1
+
 ## Subtyping
 
 hello
+
+### Code
 
 ```java
 int inc(int x) {
@@ -10,13 +14,20 @@ int inc(int x) {
 }
 ```
 
-## Parametric Polymorphism
-
-boo
-
 ---
 
 @title[Slide2]
+
+## Parametric Polymorphism
+
+1. aaa
+1. eee
+
+#### Boo
+
+boo
+
+baz *Bar*
 
 ```
 λx:A.M: A→B
