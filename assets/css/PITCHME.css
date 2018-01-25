@@ -1,4 +1,8 @@
 .reveal .slides {
-    background-color: #f3f6f9;
+    background-color: #f5f9ff;
+    padding: 10px;
 }
 
+.reveal .slides p {
+    text-align: left;
+}
