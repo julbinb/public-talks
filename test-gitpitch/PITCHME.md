@@ -1,6 +1,0 @@
-#Slide1
-
-hello
-
-
-
