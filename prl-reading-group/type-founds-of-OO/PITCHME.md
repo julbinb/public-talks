@@ -59,16 +59,16 @@ M, N = x | 0, ..             // variable    | literals
 ### Private Local State
 
 ```less
-let counter = 
-    let // private data
-        count = ref(0)
-    in  // object with interface {inc, tot}
-        { inc = λx:Int. count := !count + x,
-          tot = λx:Unit. !count }
-in
-    count.inc 1 ;
-    count.inc 5 ;
-    count.tot ()         // yields 6
+let count =                             class Counter {
+  let // private data
+    cnt = ref(0)                          private Int cnt = 0
+  in  // obj with interface {inc,tot}
+    { inc = λx:Int. cnt := !cnt + x,      Unit inc(Int x){..} 
+      tot = λx:Unit. !cnt }               Int  tot(){ret cnt;}
+in                                      }
+  count.inc 1 ;                         count = new Counter();
+  count.inc 5 ;                         count.inc(1);
+  count.tot ()         // yields 6
 ```
 
 Typing:
@@ -79,6 +79,36 @@ Typing:
   ⊢ ref(0) : Ref[Int]    count:Ref[Int] ⊢ {inc=..} : {inc:..}
 --------------------------------------------------------------
    ⊢ (let count=ref(0) in ..) : {inc:Int→Unit, tot:Unit→Int}
+```
+
+---
+
+### Subtyping
+
+Subtyping
+
+```less
+   Γ ⊢ A <: A                            Γ ⊢ A <: Top
+
+           Γ ⊢ A1 <: B1   ...   Γ ⊢ Ak <: Bk
+   ---------------------------------------------------
+    Γ ⊢ {l1:A1,..,lk:Ak,..,ln:An} <: {l1:B1,..,lk:Bk}
+
+```
+
+Typing
+
+```less
+       Γ ⊢ M : A → B    Γ ⊢ N : A'    Γ ⊢ A' <: A
+      --------------------------------------------
+                       Γ ⊢ M N : B
+```
+
+Example
+
+```java
+ArrayList<Animal> as = new ArrayList<Animal>()
+as.add(new Dog(...));      // Dog <: Animal
 ```
 
 ---
@@ -114,27 +144,38 @@ Typing
 
 ### Parametric Polymorhism (Generics)
 
-Generic identity function:
+Generic identity function
 
 ```less
-let id = λX.λx:X.x      // id : ∀X→X
-in  (id [Int] 4)        // yields 4
+let id = λX.λx:X.x      // id     : ∀X→X
+in  (id[Int] 4)         // id[Int]: Int→Int, yields 4
 ```
 
-Type of generic stack:
+Type of generic stack
 
 ```less
 ∀Item.{push : Item×List[Item] → List[Item],
        pop  : List[Item] → List[Item], 
-       empty: List[Item],     top: List[Item] → Item}
+       empty: List[Item], 
+       top  : List[Item] → Item}
 ```
 
-Implementation of generic stack:
+Implementation of generic stack
 
 ```less
 λItem.{push = λx:Item.λs:List[Item]. cons[Item] x s,
-       pop  = λs:List[Item]. tail [Item] s, ..}
+       pop  = λs:List[Item].         tail[Item] s, 
+       ..}
 ```
+
+---
+
+### Bounded quantification
+
+
+---
+
+### Existential types
 
 ---
 
