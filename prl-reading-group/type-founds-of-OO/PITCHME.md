@@ -260,10 +260,150 @@ mvdy = λP<:Point.
 ### Part 2
 ## Object-Oriented Languages
 
+```less
+                          data abstraction
+                                 +
+    object-oriented   =     object types     (Luca Cardelli)
+                                 +
+                          type inheritance
+```
+
+</br>
+
+#### SIMULA 67
+
+```less
+                    object types ~ classes
+               type inheritance  ~ class inheritance
+```
 ---
 
-blaaa
+#### Structural Subtyping
+
+```sml
+type Meter{ v: Float }    type  ColMeter{ v: Float, c: Color }
+type Feet { v: Float }
+
+fun calcFuel(dist : Meter, ...) : Float ... end
+
+val fuel = calcFuel(Meter{v=1000}, ...)           (* ok *)
+val fuel = calcFuel(ColMeter{v=1000}, ...)        (* ok *)
+val fuel = calcFuel(Feet {v=1000}, ...)           (* ok :( *)
+```
+
+#### Nominal Subtyping (Inheritance)
+
+```java
+class Meter{ Float v }    class ColMeter extends Meter{ Color c }
+class Feet { Float v }
+
+Float calcFuel(Meter dist, ...) { ... }
+
+var fuel = calcFuel(new Meter(1000, ...))         // ok
+var fuel = calcFuel(new ColoredMeter(1000, ...))  // ok
+var fuel = calcFuel(new Feet (1000), ...)         // type error :)
+```
+
+---
+
+#### Generic Programming </br> (Bounded Parametric Polymorphism)
+
+```dart
+class Showable{ String show(){ return "Showable" } }
+
+<T extends Showable> String showAll(List<T> xs){.. x.show() ..}
+
+class Person  { .. String show(){..} }
+// ??? showAll<Person>
+
+// ShowablePerson cannot extend both Showable and Person
+class ShowablePerson extends Showable {.. String show(){..} }
+showAll<ShowablePerson>(..); // ok
+
+class Weighed { .. }
+
+// ??? class WeighedShowableStudent
 
 ```
-Γ ⊢ λx:A.M: A→B
+
+---
+
+* [Subtypes vs. Where Clauses: Constraining Parametric Polymorphism](http://www.pmg.lcs.mit.edu/papers/where-clauses.pdf).
+  _Mark Day, Robert Gruber, Barbara Liskov, Andrew C. Myers_. OOPSLA 1995.
+
+Constraints on type parameters via _where clauses_
+instead of subtype bounds.
+
+```csharp
+showAll[T](xs: List[T]): String 
+    where T has show() returns(String)
 ```
+
+---
+
+#### Interfaces (Java)
+
+```dart
+interface Showable { String show(); }
+
+<T implements Showable> String showAll(List<T> xs){.. x.show() ..}
+
+class Person implements Showable { .. String toString(){..} }
+showAll<Person>(..);      // ok
+
+interface Weighed { .. }
+<T implements Weighed> Float totalWeight(List<T> xs){ .. }
+
+class Student extends Person implements Weighed { .. }
+totalWeight<Student>(..); // ok
+
+// ??? totalWeight<Person>(..);
+```
+
+---
+
+#### Protocols (Swift)
+
+```swift
+protocol Showable { func show() -> String; }
+func showAll<T: Showable>(xs: List<T>) {.. x.show() ..}
+
+class Person: Showable { .. }
+showAll<Person>(..);      // ok
+
+protocol Weighed { .. }
+fun totalWeight<T: Weighed>(xs: List<T>){ .. }
+
+class Student: Person, Weighed { .. }
+totalWeight<Student>(..); // ok
+
+extension Person: Weighed { .. }
+totalWeight<Person>(..);  // ok
+```
+
+---
+
+#### Multi-type constraints
+
+```csharp
+member[E, C](..): Bool
+    where E has equal(E)   returns(Bool)
+          C has elements() returns(List[E])
+```
+
+```swift
+protocol Equatable  { func equal(x: Self) -> Bool }
+protocol Collection { 
+    associatedtype Elem;
+    func elements() -> List<E>;
+}
+
+member<E: Equatable, C: Collection>(..) -> Bool
+    where C.Elem == E
+
+```
+
+---
+
+## What's next?
+

@@ -10,3 +10,7 @@
 .reveal pre {
     width: 95%;
 }
+
+.hljs-comment {
+    color: #349c68;
+}
