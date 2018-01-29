@@ -332,7 +332,7 @@ class Weighed { .. }
   _Mark Day, Robert Gruber, Barbara Liskov, Andrew C. Myers_. OOPSLA 1995.
 
 Constraints on type parameters via _where clauses_
-instead of subtype bounds.
+instead of subtype bounds (language Theta).
 
 ```csharp
 showAll[T](xs: List[T]): String 
@@ -385,11 +385,15 @@ totalWeight<Person>(..);  // ok
 
 #### Multi-type constraints
 
+Theta
+
 ```csharp
 member[E, C](..): Bool
     where E has equal(E)   returns(Bool)
           C has elements() returns(List[E])
 ```
+
+Swift
 
 ```swift
 protocol Equatable  { func equal(x: Self) -> Bool }
