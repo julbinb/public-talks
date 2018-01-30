@@ -19,6 +19,12 @@ Julia Belyakova
 ### Part 1
 ## Type Systems
 
+```less
+                    typed lambda calculus
+                        as a model of
+         statically typed object-oriented language
+```
+
 ---
 
 ### References
@@ -29,6 +35,9 @@ Julia Belyakova
 
 1. [Type Systems](http://lucacardelli.name/Papers/TypeSystems.pdf). _Luca Cardelli_.  
    ACM Computing Surveys. 1996.
+
+<span style="font-size: 90%">Alternative approach (late 90-s/early 2000-s) —
+Little&nbsp;Java, Featherweight&nbsp;Java.</span>
 
 ---
 
@@ -61,15 +70,15 @@ M, N = x | 0, ..             // variable    | literals
 #### Private Local State
 
 ```less
-let count =                               class Counter {
+let count =                              class Counter {
   let // private data
-    cnt = ref(0)                            private Int cnt = 0
+    cnt = ref(0)                           private Int cnt = 0
   in  // obj with interface {inc,tot}
-    { inc = λx:Int.  cnt := !cnt + x,       Void inc(Int x){..} 
-      tot = λx:Unit. !cnt }                 Int  tot(){ret cnt;}
-in                                        }
-  count.inc 1 ;                           count = new Counter();
-  count.inc 5 ;                           count.inc(1);
+    { inc = λx:Int.  cnt := !cnt + x,      Void inc(Int x){..} 
+      tot = λx:Unit. !cnt }                Int  tot(){ret cnt;}
+in                                       }
+  count.inc 1 ;                          count = new Counter();
+  count.inc 5 ;                          count.inc(6); count.tot()
   count.tot ()         // yields 6
 ```
 
@@ -120,26 +129,26 @@ in  distO {x=3,y=4,w=2.5}   (* {x:Int,y:Int,w:Flt} <: Point *)
 Types
 
 ```less
-A, B = ..                // types of F1
-   | X                   // type variable
-   | ∀X.A                // universally quantified type
+A, B = .. | List[A]           // types of F1 + built-in list
+   | X                        // type variable
+   | ∀X.A                     // universally quantified type
 ```
 
 Terms
 
 ```less
-M, N = ..                // terms of F1
-   | λX.M                // type abstraction
-   | tm [A]              // type application (instantiation)
+M, N = .. | cons[A](M,N) | .. // terms of F1 + list primitives
+   | λX.M                     // type abstraction
+   | tm [A]                   // type application (instantiation)
 ```
 
 Typing
 
 ```less
 (T-TyAbs)            (T-TyApp)
-     Γ, X ⊢ M : A         Γ ⊢ M : ∀X.A     Γ ⊢ B
+     Γ, X ⊢ M : A         Γ ⊢ N : ∀X.A     Γ ⊢ B
   ------------------     --------------------------
-   Γ ⊢ λX.M : ∀X.A          Γ ⊢ M [B] : [B/X]A
+   Γ ⊢ λX.M : ∀X.A          Γ ⊢ N [B] : [B/X]A
 ```
 
 ---
@@ -156,18 +165,18 @@ in  (id [Int] 4)      (* id[Int] : Int→Int; (id.. ) yields 4 *)
 Type of generic stack
 
 ```less
-∀Item.{push  : Item × List[Item] → List[Item],
-       pop   : List[Item]        → List[Item], 
-       top   : List[Item]        → Item,
+∀Item.{push  : Item       → List[Item] → List[Item],
+       pop   : List[Item] → List[Item], 
+       top   : List[Item] → Item,
        empty : List[Item]}
 ```
 
 Implementation of generic stack
 
 ```less
-λItem.{push  = λx:Item.λs:List[Item]. cons [Item] x s,
-       pop   = λs:List[Item].         tail [Item] s, 
-       top   = λs:List[Item].         head [Item] s,
+λItem.{push  = λx:Item.λs:List[Item]. cons[Item](x, s),
+       pop   = λs:List[Item].         tail[Item](s), 
+       top   = λs:List[Item].         head[Item](s),
        empty = nil[Item]}
 ```
 
@@ -178,14 +187,17 @@ Implementation of generic stack
 Syntax
 
 ```clean
-A, B, C = ..                // types of F2
-   | ∃X.B                   // existential type
+A, B, C = ..               // types of F2
+ | ∃X.B                    // existential type
 
-M, N, P = ..                // terms of F2
-   // value M packed into pkg of type ∃X.A with hidden type B
-   | pack X=B in A with M
-   // use of value x:A from pkg P in term N
-   | open P as X,x:A in N
+M, N, P = ..               // terms of F2
+ // value M packed into pkg of type ∃X.A with hidden type B
+ | pack X=B in A with M
+ // pkg = pack X=Int in {v:X, f:X→Int} with {v=0, f=λx:Int.x+1}
+ 
+ // use of value x:A from pkg P in term N
+ | open P as X,x:A in N
+ // open pkg as X, x:{v:X, f:X→Int} in x.f (x.f x.v) // yields 2
 ```
 
 Typing
@@ -204,8 +216,8 @@ Abstract datatype of generic stack
 
 ```lasso
 GenericStack = ∀Item.∃Stack.StackRecord // shorthand
-StackRecord  = {push : Item×Stack → Stack,  pop  : Stack → Stack, 
-                top  : Stack      → Stack,  empty: Stack}
+StackRecord  = {push: Item → Stack → Stack, pop  : Stack → Stack, 
+                top : Stack→ Stack,         empty: Stack}
 ```
 
 Implementation of GenericStack abstract datatype
@@ -221,7 +233,7 @@ let listStackPackage (* : GenericStack *) =
 Use of GenericStack
 
 ```sml
-in open listStackPackage[Int] as Stack, s:{push:Int×Stack→..}
+in open listStackPackage [Int] as Stack, s:{push:Int×Stack→..}
 in s.top (s.push 10 (s.push 1 s.empty)) (* : Int — ok *)
 (* in s.empty (* : Stack — type-error *) *)
 ```
@@ -272,6 +284,7 @@ mvdy = λP<:Point.
 
 #### SIMULA 67
 
+
 ```less
                     object types ~ classes
                type inheritance  ~ class inheritance
@@ -280,8 +293,11 @@ mvdy = λP<:Point.
 
 #### Structural Subtyping
 
+<div style="text-align: center; font-size: 60%; margin-top:-20px">
+(Emerald, PolyTOIL in late 80-s/90-s)</div>
+
 ```sml
-type Meter{ v: Float }    type  ColMeter{ v: Float, c: Color }
+type Meter{ v: Float }    type ColMeter{ v: Float, c: Color }
 type Feet { v: Float }
 
 fun calcFuel(dist : Meter, ...) : Float ... end
@@ -309,11 +325,11 @@ var fuel = calcFuel(new Feet (1000), ...)         // type error :)
 #### Generic Programming </br> (Bounded Parametric Polymorphism)
 
 ```dart
-class Showable{ String show(){ return "Showable" } }
-
+class Showable { String show(){ return "Showable" } }
+// λT<:Showable. λxs:List[T]. ..    // xs is homogeneous
 <T extends Showable> String showAll(List<T> xs){.. x.show() ..}
 
-class Person  { .. String show(){..} }
+class Person{ .. String show(){..} }
 // ??? showAll<Person>
 
 // ShowablePerson cannot extend both Showable and Person
@@ -341,7 +357,7 @@ showAll[T](xs: List[T]): String
 
 ---
 
-#### Interfaces (Java)
+#### Interfaces (Java, late 90-s)
 
 ```dart
 interface Showable { String show(); }
@@ -360,9 +376,11 @@ totalWeight<Student>(..); // ok
 // ??? totalWeight<Person>(..);
 ```
 
+<div style="text-align:center"> Next step — retroactive modeling.</div>
+
 ---
 
-#### Protocols (Swift)
+#### Protocols (Swift, 2014)
 
 ```swift
 protocol Showable { func show() -> String; }
