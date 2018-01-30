@@ -61,6 +61,7 @@ M, N = x | 0, ..             // variable    | literals
    | M N                     // application (call)
    | let x=M in N | M ; N    // let-binding | composition
    | {l1=M1, .., ln=Mn}      // record
+   | M.l                     // field access
    | ref(M)                  // reference 
    | !M | M := N             // dereference | assignment
 ```
@@ -139,7 +140,7 @@ Terms
 ```less
 M, N = .. | cons[A](M,N) | .. // terms of F1 + list primitives
    | λX.M                     // type abstraction
-   | tm [A]                   // type application (instantiation)
+   | N [A]                    // type application (instantiation)
 ```
 
 Typing
@@ -158,8 +159,8 @@ Typing
 Generic identity function
 
 ```sml
-let id = λX.λx:X.x    (* id      : ∀X→X                      *)
-in  (id [Int] 4)      (* id[Int] : Int→Int; (id.. ) yields 4 *)
+let id = λX.λx:X.x    (* id       : ∀X.X→X                    *)
+in  (id [Int] 4)      (* id [Int] : Int→Int; (id.. ) yields 4 *)
 ```
 
 Type of generic stack
@@ -197,7 +198,7 @@ M, N, P = ..               // terms of F2
  
  // use of value x:A from pkg P in term N
  | open P as X,x:A in N
- // open pkg as X, x:{v:X, f:X→Int} in x.f (x.f x.v) // yields 2
+ // open pkg as X, x:{v:X, f:X→Int} in (x.f x.v) // yields 1
 ```
 
 Typing
@@ -225,8 +226,8 @@ Implementation of GenericStack abstract datatype
 ```sml
 let listStackPackage (* : GenericStack *) = 
 λItem.pack Stack=List[Item] as StackRecord with
-      {push  = λx:Item.λs:List[Item]. cons[Item] x s,
-       pop   = λs:List[Item].         tail[Item] s, 
+      {push  = λx:Item.λs:List[Item]. cons[Item](x, s),
+       pop   = λs:List[Item].         tail[Item](s), 
        ... }
 ```
 
