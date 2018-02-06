@@ -281,8 +281,6 @@ mvdy = λP<:Point.
                           type inheritance
 ```
 
-</br>
-
 #### SIMULA 67
 
 
@@ -330,30 +328,42 @@ class Showable { String show(){ return "Showable" } }
 // λT<:Showable. λxs:List[T]. ..    // xs is homogeneous
 <T extends Showable> String showAll(List<T> xs){.. x.show() ..}
 
-class Person{ .. String show(){..} }
-// ??? showAll<Person>
-
-// ShowablePerson cannot extend both Showable and Person
+class Person{ .. }
+// single inheritance: class cannot extend both Showable and Person
 class ShowablePerson extends Showable {.. String show(){..} }
-showAll<ShowablePerson>(..); // ok
+showAll<ShowablePerson>(..); // ok, but ShowablePerson !<: Person
 
 class Weighed { .. }
+<T extends Weighed> Float totalWeight(List<T> xs){ .. }
 
-// ??? class WeighedShowableStudent
+// ??? class WeighedShowablePerson
+```
 
+#### C++ Templates (Unconstrained)
+
+```cpp
+template <class T> string showAll(list<T> xs) {.. x.show() ..}
+// Instance showAll<C> ok if method show() is defined in C.
+// Templates do NOT suppport separate compilation!
 ```
 
 ---
 
 * [Subtypes vs. Where Clauses: Constraining Parametric Polymorphism](http://www.pmg.lcs.mit.edu/papers/where-clauses.pdf).
-  _Mark Day, Robert Gruber, Barbara Liskov, Andrew C. Myers_. OOPSLA 1995.
+  _Mark Day, Robert Gruber, Barbara Liskov, Andrew C. Myers_. OOPSLA&nbsp;1995.
 
 Constraints on type parameters via _where clauses_
-instead of subtype bounds (language Theta).
+instead of subtype bounds (language Theta):
 
 ```csharp
 showAll[T](xs: List[T]): String 
     where T has show() returns(String)
+```
+
+Compare to structural subtyping:
+
+```less
+∀T<:{show: Unit→String}.List[T]→String
 ```
 
 ---
@@ -362,7 +372,6 @@ showAll[T](xs: List[T]): String
 
 ```dart
 interface Showable { String show(); }
-
 <T implements Showable> String showAll(List<T> xs){.. x.show() ..}
 
 class Person implements Showable { .. String toString(){..} }
@@ -372,6 +381,7 @@ interface Weighed { .. }
 <T implements Weighed> Float totalWeight(List<T> xs){ .. }
 
 class Student extends Person implements Weighed { .. }
+showAll<Student>(..);     // ok
 totalWeight<Student>(..); // ok
 
 // ??? totalWeight<Person>(..);
@@ -394,6 +404,7 @@ protocol Weighed { .. }
 fun totalWeight<T: Weighed>(xs: List<T>){ .. }
 
 class Student: Person, Weighed { .. }
+showAll<Student>(..);     // ok
 totalWeight<Student>(..); // ok
 
 extension Person: Weighed { .. }
@@ -429,4 +440,9 @@ member<E: Equatable, C: Collection>(..) -> Bool
 ---
 
 ## What's next?
+
+* C++ Concepts
+* Java Genus Constraints
+
+**Problem.**  How to combine subtyping with constraints?
 
